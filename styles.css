@@ -1,0 +1,193 @@
+/* ==========================================================================
+   lipnitski.com — placeholder page
+   One typeface, one size, two colours. Hierarchy comes from spacing only.
+   ========================================================================== */
+
+:root {
+  /* --- Colour ------------------------------------------------------------ */
+  --paper: #FFF9EF;
+  --ink: #023A43;
+
+  --bg: var(--paper);
+  --fg: var(--ink);
+
+  /* --- Typeface ----------------------------------------------------------
+     All three families are requested in index.html; the browser only
+     downloads the one actually used, so switching is this one line.
+     Once the choice is final, trim the unused families from the <link>.   */
+  --font: "IBM Plex Mono", ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, "Liberation Mono", "Courier New", monospace;
+  /* --font: "Space Mono", ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, "Liberation Mono", "Courier New", monospace; */
+  /* --font: "DM Mono", ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, "Liberation Mono", "Courier New", monospace; */
+
+  --tracking: 0.1em;
+  --leading: 1.35;
+
+  /* --- Rhythm ------------------------------------------------------------
+     Everything is measured in lines and character cells.                  */
+  --line: calc(var(--leading) * 1em);
+  --cell: calc(1ch + var(--tracking));
+  --gap: calc(var(--line) * 4);          /* between the three groups */
+  --pad: clamp(20px, 6vw, 112px);        /* distance from screen edges */
+
+  /* --- Key / value grid (in characters) ----------------------------------
+     Shared by the metadata and the footer, so values line up vertically.  */
+  --key: 6;                              /* longest key: "Status" / "Gaming" */
+  --gutter: 3;
+  --value: 24;                           /* longest value: the email address */
+
+  /* --- Size ---------------------------------------------------------------
+     15px → 22px on larger screens. On narrow ones the size drops (down to
+     12px) just enough for the longest row to stay on one line: --fit is the
+     size at which key + gutter + value span the available width. 0.715em is
+     one character (widest of the three candidate fonts) plus tracking.     */
+  --fit: calc((100vw - 2 * var(--pad)) / ((var(--key) + var(--gutter) + var(--value)) * 0.715));
+  --size: clamp(12px, min(var(--fit), max(15px, 1.6vw)), 22px);
+
+  /* --- Paper grain -------------------------------------------------------
+     0 = off (default), 1 = on.                                            */
+  --grain: 0;
+  --grain-strength: 0.08;         /* keep it barely there */
+  --grain-texture: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n' x='0' y='0' width='100%25' height='100%25'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' seed='7' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 2.4 0 0 0 -0.9'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* --- Base ---------------------------------------------------------------- */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  color-scheme: only light;
+  background: var(--bg);
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  min-height: 100svh;
+  display: grid;
+  align-items: center;
+  justify-items: start;
+  padding:
+    calc(var(--pad) + env(safe-area-inset-top, 0px))
+    calc(var(--pad) + env(safe-area-inset-right, 0px))
+    calc(var(--pad) + env(safe-area-inset-bottom, 0px))
+    calc(var(--pad) + env(safe-area-inset-left, 0px));
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--font);
+  font-size: var(--size);
+  font-weight: 400;
+  line-height: var(--leading);
+  letter-spacing: var(--tracking);
+  text-transform: uppercase;
+  font-synthesis: none;
+  font-variant-ligatures: none;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Grain: the noise is used as a mask over the text colour, so it
+   introduces no third colour. */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background: var(--fg);
+  -webkit-mask-image: var(--grain-texture);
+  mask-image: var(--grain-texture);
+  opacity: calc(var(--grain) * var(--grain-strength));
+}
+
+h1,
+p,
+dl,
+dt,
+dd {
+  margin: 0;
+  padding: 0;
+  font: inherit;
+  letter-spacing: inherit;
+}
+
+h1 {
+  text-wrap: balance;
+}
+
+/* --- Layout -------------------------------------------------------------- */
+
+.sheet {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 40ch;
+  display: grid;
+  row-gap: var(--gap);
+}
+
+.sheet > main {
+  display: grid;
+  row-gap: var(--gap);
+}
+
+.pairs {
+  display: grid;
+  grid-template-columns: calc(var(--key) * var(--cell)) minmax(0, 1fr);
+  column-gap: calc(var(--gutter) * var(--cell));
+  align-items: start;
+}
+
+.pairs dt {
+  grid-column: 1;
+  white-space: nowrap;
+}
+
+.pairs dd {
+  grid-column: 2;
+}
+
+/* The two footer links sit on adjacent lines. Touch targets need 24px between
+   their centres (WCAG 2.5.8), so the rows open up slightly when a line is
+   shorter than that — phones only; at larger sizes the gap is zero. */
+footer .pairs {
+  row-gap: max(0px, calc(25px - var(--line)));
+}
+
+/* --- Links --------------------------------------------------------------- */
+
+a {
+  color: inherit;
+  text-decoration-line: underline;
+  text-decoration-thickness: max(1px, 0.06em);
+  text-underline-offset: 3px;
+  overflow-wrap: anywhere;
+}
+
+a:hover {
+  text-decoration-thickness: max(2px, 0.14em);
+}
+
+a:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 4px;
+}
+
+/* --- Motion -------------------------------------------------------------- */
+
+@media (prefers-reduced-motion: no-preference) {
+  .sheet {
+    animation: appear 0.7s ease-out both;
+  }
+}
+
+@keyframes appear {
+  from {
+    opacity: 0;
+  }
+}
