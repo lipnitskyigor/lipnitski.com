@@ -28,6 +28,7 @@
   --cell: calc(1ch + var(--tracking));
   --gap: calc(var(--line) * 4);          /* between the three groups */
   --pad: clamp(20px, 6vw, 112px);        /* distance from screen edges */
+  --top: calc(max(var(--pad), var(--gap)) - 20px);  /* distance from the top edge */
 
   /* --- Key / value grid (in characters) ----------------------------------
      Shared by the metadata and the footer, so values line up vertically.  */
@@ -70,10 +71,10 @@ body {
   min-height: 100vh;
   min-height: 100svh;
   display: grid;
-  align-items: center;
+  align-items: start;
   justify-items: start;
   padding:
-    calc(var(--pad) + env(safe-area-inset-top, 0px))
+    calc(var(--top) + env(safe-area-inset-top, 0px))
     calc(var(--pad) + env(safe-area-inset-right, 0px))
     calc(var(--pad) + env(safe-area-inset-bottom, 0px))
     calc(var(--pad) + env(safe-area-inset-left, 0px));
